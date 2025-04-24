@@ -6,8 +6,6 @@ import time
 import datetime
 import json
 import os
-import cv2
-import numpy as np
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
@@ -233,6 +231,7 @@ class Spaceship(pygame.sprite.Sprite):
     def __init__(self, x, y, health):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("img/spaceship.png")
+        self.bw_image = pygame.image.load("img/bw/spaceship_bw_cleaned_final.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         self.health_start = health
@@ -290,6 +289,7 @@ class Bullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("img/bullet.png")
+        self.bw_image = pygame.image.load("img/bw/bullet_bw_cleaned_final.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
 
@@ -320,7 +320,9 @@ class Bullets(pygame.sprite.Sprite):
 class Aliens(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("img/alien" + str(random.randint(1, 5)) + ".png")
+        alien_num = str(random.randint(1, 5))
+        self.image = pygame.image.load(f"img/alien{alien_num}.png")
+        self.bw_image = pygame.image.load(f"img/bw/alien{alien_num}_bw_cleaned_final.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         self.move_counter = 0
@@ -346,6 +348,7 @@ class Alien_Bullets(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("img/alien_bullet.png")
+        self.bw_image = pygame.image.load("img/bw/alien_bullet_bw_cleaned_final.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         
@@ -383,16 +386,22 @@ class Explosion(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
+        self.bw_images = []
         for num in range(1, 6):
             img = pygame.image.load(f"img/exp{num}.png")
+            bw_img = pygame.image.load(f"img/bw/exp{num}_bw_cleaned_final.png")
             if size == 1:
                 img = pygame.transform.scale(img, (20, 20))
+                bw_img = pygame.transform.scale(bw_img, (20, 20))
             if size == 2:
                 img = pygame.transform.scale(img, (40, 40))
+                bw_img = pygame.transform.scale(bw_img, (40, 40))
             if size == 3:
                 img = pygame.transform.scale(img, (160, 160))
-            # Add the image to the list
+                bw_img = pygame.transform.scale(bw_img, (160, 160))
+            # Add the images to the lists
             self.images.append(img)
+            self.bw_images.append(bw_img)
         self.index = 0
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -658,29 +667,6 @@ def reset_game():
     # Update stats
     weekly_stats["games_played"] += 1
 
-def convert_to_black_and_white(surface):
-    """Convert a surface to black and white using OpenCV"""
-    # Convert Pygame surface to numpy array
-    pixels = pygame.surfarray.pixels3d(surface)
-    pixels = np.transpose(pixels, (1, 0, 2))
-    
-    # Convert to grayscale using OpenCV
-    gray = cv2.cvtColor(pixels, cv2.COLOR_RGB2GRAY)
-    
-    # Convert back to RGB
-    gray_rgb = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    
-    # Convert back to Pygame surface
-    gray_rgb = np.transpose(gray_rgb, (1, 0, 2))
-    bw_surface = pygame.Surface(surface.get_size())
-    pygame.surfarray.blit_array(bw_surface, gray_rgb)
-    
-    # Preserve alpha channel if original surface had one
-    if surface.get_alpha():
-        bw_surface.set_alpha(surface.get_alpha())
-    
-    return bw_surface
-
 # Main game loop
 weekly_stats = load_leaderboard()
 create_aliens()
@@ -933,26 +919,21 @@ while run:
             if not hide_progression:
                 draw_progression_info()
             
-            # Draw game elements with black and white effect
+            # Draw game elements with black and white images
             for sprite in spaceship_group:
-                bw_sprite = convert_to_black_and_white(sprite.image)
-                screen.blit(bw_sprite, sprite.rect)
+                screen.blit(sprite.bw_image, sprite.rect)
             
             for sprite in bullet_group:
-                bw_sprite = convert_to_black_and_white(sprite.image)
-                screen.blit(bw_sprite, sprite.rect)
+                screen.blit(sprite.bw_image, sprite.rect)
             
             for sprite in alien_group:
-                bw_sprite = convert_to_black_and_white(sprite.image)
-                screen.blit(bw_sprite, sprite.rect)
+                screen.blit(sprite.bw_image, sprite.rect)
             
             for sprite in alien_bullet_group:
-                bw_sprite = convert_to_black_and_white(sprite.image)
-                screen.blit(bw_sprite, sprite.rect)
+                screen.blit(sprite.bw_image, sprite.rect)
             
             for sprite in explosion_group:
-                bw_sprite = convert_to_black_and_white(sprite.image)
-                screen.blit(bw_sprite, sprite.rect)
+                screen.blit(sprite.bw_images[sprite.index], sprite.rect)
         else:
             # Draw everything normally
             draw_bg()

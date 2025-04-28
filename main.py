@@ -6,6 +6,7 @@ import time
 import datetime
 import json
 import os
+from rest_logic import save_game_stats, calculate_break_trigger_time, save_session_duration
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
@@ -49,6 +50,8 @@ last_alien_shot = pygame.time.get_ticks()
 countdown = 3
 last_count = pygame.time.get_ticks()
 game_over = 0  # 0 is no game over, 1 means player has won, -1 means player has lost
+show_break_message = False  # Flag to track if break message has been shown
+game_paused = False  # Flag to track if game is paused for break
 
 # Define colours
 red = (255, 0, 0)
@@ -83,9 +86,10 @@ break_reminder_time = 0
 cooldown_start_time = 0
 break_start_time = 0
 break_duration = 10  # seconds for break (reduced for testing, normally would be longer)
-play_duration_threshold = 30  # seconds before break reminder
+# play_duration_threshold = 30  # seconds before break reminder (Replaced by dynamic calculation)
 ignore_duration_threshold = 60  # seconds before cooldown if ignored
 last_break_reminder = 0  # Track last break reminder time
+dynamic_break_threshold = 300 # Default 5 minutes, will be calculated later
 
 # Progressive cooldown variables
 breaks_ignored_count = 0
@@ -667,10 +671,62 @@ def reset_game():
     # Update stats
     weekly_stats["games_played"] += 1
 
+def update_session_average():
+    """Update the average session time based on all sessions"""
+    try:
+        # Load existing data
+        with open('game_data.json', 'r') as f:
+            data = json.load(f)
+        
+        # Get all session times
+        session_times = [session['duration'] for session in data['sessions']]
+        
+        # Calculate new average
+        if session_times:
+            data['average_session_time'] = sum(session_times) / len(session_times)
+            
+            # Update break threshold based on average (1.5x the average)
+            data['break_threshold'] = data['average_session_time'] * 1.5
+            
+            # Save updated data
+            with open('game_data.json', 'w') as f:
+                json.dump(data, f, indent=4)
+            
+            # Update the global break threshold
+            global dynamic_break_threshold
+            dynamic_break_threshold = data['break_threshold']
+            
+            print(f"Updated average session time: {data['average_session_time']:.2f} seconds")
+            print(f"Updated break threshold: {data['break_threshold']:.2f} seconds")
+    except Exception as e:
+        print(f"Error updating session average: {e}")
+
+# Initialize break threshold from session data
+def initialize_break_threshold():
+    global dynamic_break_threshold
+    try:
+        # Load session data
+        with open('session_data.json', 'r') as f:
+            session_data = json.load(f)
+        
+        if session_data:
+            # Calculate average session duration
+            avg_duration = sum(session_data) / len(session_data)
+            # Set break threshold to 1.5x average
+            dynamic_break_threshold = avg_duration * 1.5
+        else:
+            dynamic_break_threshold = 160  # Default for first-time players (2 minutes and 40 seconds)
+    except (FileNotFoundError, json.JSONDecodeError):
+        dynamic_break_threshold = 160  # Default for first-time players (2 minutes and 40 seconds)
+
+# Call initialization at game start
+initialize_break_threshold()
+
 # Main game loop
 weekly_stats = load_leaderboard()
 create_aliens()
-play_start_time = time.time()
+# play_start_time = time.time() # Initialized later when gameplay starts
+# last_break_reminder = play_start_time # Initialized later when gameplay starts
 session_start_time = time.time()
 
 run = True
@@ -749,16 +805,27 @@ while run:
         if not hide_progression:
             draw_progression_info()
         
+        # Draw level
+        draw_text(f"LEVEL: {current_level}", font30, white, 10, 70)
+        
+        # Check if current session time exceeds the break threshold
+        current_session_time = time.time() - session_start_time
+        if current_session_time > dynamic_break_threshold and not show_break_message:
+            show_break_message = True
+            break_start_time = time.time()
+            game_paused = True
+        
         # State transitions based on timers
         current_time = time.time()
         
-        # Check for break reminder every 30 seconds of continuous play
-        if current_state not in [STATE_BREAK_TAKEN, STATE_ENFORCED_COOLDOWN]:
+        # Check for break reminder only during normal play after countdown
+        if current_state == STATE_NORMAL_PLAY and countdown == 0:
             elapsed_play_time = current_time - play_start_time
-            if elapsed_play_time >= play_duration_threshold and (current_time - last_break_reminder) >= play_duration_threshold:
+            # Check if enough time has passed since the last reminder (or game start)
+            if (current_time - last_break_reminder) >= dynamic_break_threshold:
                 current_state = STATE_BREAK_REMINDER
                 break_reminder_time = current_time
-                last_break_reminder = current_time
+                last_break_reminder = current_time # Update last reminder time only when reminder is shown
                 
         # Break reminder state handling
         if current_state == STATE_BREAK_REMINDER:
@@ -865,7 +932,8 @@ while run:
                     draw_text('GAME OVER!', font40, red, int(screen_width / 2 - 120), int(screen_height / 2 - 120))
                 if game_over == 1:
                     draw_text('YOU WIN!', font40, green, int(screen_width / 2 - 100), int(screen_height / 2 - 120))
-                
+
+
                 # Display score with more prominence
                 draw_text(f'Final Score: {score}', font30, yellow, int(screen_width / 2 - 100), int(screen_height / 2 - 50))
                 
@@ -904,6 +972,7 @@ while run:
                 last_count = count_timer
                 if countdown == 0:
                     play_start_time = time.time()  # Reset play timer when game actually starts
+                    last_break_reminder = play_start_time # Reset break reminder timer too
 
         # Update explosion group    
         explosion_group.update()
@@ -1085,4 +1154,20 @@ if score > weekly_stats["high_score"]:
     weekly_stats["high_score"] = score
 save_leaderboard()
 
+# Calculate session duration at the end
+session_end_time = time.time()
+# session_start_time should have been initialized at the actual start of the session
+session_duration = int(session_end_time - session_start_time)
+
+save_session_duration(session_duration)
+
+save_game_stats(
+    mode=current_mode,
+    duration=session_duration,
+    took_break=weekly_stats["breaks_taken"] > 0,
+    level=weekly_stats["max_level"],
+    breaks_ignored=weekly_stats["breaks_ignored"]
+)
+
 pygame.quit()
+

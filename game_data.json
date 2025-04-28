@@ -1,0 +1,258 @@
+[
+  {
+    "timestamp": "2025-04-25T19:31:13.360258",
+    "mode": "Normal",
+    "duration": 15602,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 128
+  },
+  {
+    "timestamp": "2025-04-25T19:54:16.345787",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 128
+  },
+  {
+    "timestamp": "2025-04-28T12:49:36.213702",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 128
+  },
+  {
+    "timestamp": "2025-04-28T12:53:36.105796",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 128
+  },
+  {
+    "timestamp": "2025-04-28T12:54:18.244004",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T12:54:26.692351",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T13:06:18.203775",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T13:51:34.856589",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T13:52:01.155125",
+    "mode": "BreakAware",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T13:52:10.050422",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 159
+  },
+  {
+    "timestamp": "2025-04-28T14:06:53.910405",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T14:13:15.806323",
+    "mode": "Normal",
+    "duration": 38,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T14:17:57.176126",
+    "mode": "Normal",
+    "duration": 262,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T15:49:54.486338",
+    "mode": "Normal",
+    "duration": 389,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T15:53:36.391170",
+    "mode": "Normal",
+    "duration": 9,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T15:57:10.206759",
+    "mode": "Normal",
+    "duration": 168,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T16:06:34.763393",
+    "mode": "Normal",
+    "duration": 168,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T16:13:11.039643",
+    "mode": "Normal",
+    "duration": 158,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T16:15:11.475781",
+    "mode": "Normal",
+    "duration": 9,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T17:01:54.441745",
+    "mode": "Normal",
+    "duration": 1,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T17:04:23.959046",
+    "mode": "Normal",
+    "duration": 122,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T17:43:49.281041",
+    "mode": "Normal",
+    "duration": 229,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T17:49:52.225084",
+    "mode": "Normal",
+    "duration": 278,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T17:52:18.264947",
+    "mode": "Normal",
+    "duration": 40,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 160
+  },
+  {
+    "timestamp": "2025-04-28T18:06:02.875447",
+    "mode": "Normal",
+    "duration": 376,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 161
+  },
+  {
+    "timestamp": "2025-04-28T18:09:20.050324",
+    "mode": "Normal",
+    "duration": 104,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 161
+  },
+  {
+    "timestamp": "2025-04-28T18:11:22.000608",
+    "mode": "Normal",
+    "duration": 39,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 162
+  },
+  {
+    "timestamp": "2025-04-28T18:13:03.417387",
+    "mode": "Normal",
+    "duration": 69,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 163
+  },
+  {
+    "timestamp": "2025-04-28T18:14:02.914295",
+    "mode": "Normal",
+    "duration": 58,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 163
+  },
+  {
+    "timestamp": "2025-04-28T18:14:04.776849",
+    "mode": "Normal",
+    "duration": 0,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 163
+  },
+  {
+    "timestamp": "2025-04-28T18:15:09.509309",
+    "mode": "Normal",
+    "duration": 42,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 164
+  },
+  {
+    "timestamp": "2025-04-28T18:36:01.026038",
+    "mode": "Normal",
+    "duration": 7,
+    "took_break": true,
+    "level": 7,
+    "breaks_ignored": 164
+  }
+]

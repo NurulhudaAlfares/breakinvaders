@@ -82,11 +82,9 @@ game_mode_selected = False
 
 # Timers
 play_start_time = 0
-break_reminder_time = 0
 cooldown_start_time = 0
 break_start_time = 0
 break_duration = 10  # seconds for break (reduced for testing, normally would be longer)
-# play_duration_threshold = 30  # seconds before break reminder (Replaced by dynamic calculation)
 ignore_duration_threshold = 60  # seconds before cooldown if ignored
 last_break_reminder = 0  # Track last break reminder time
 dynamic_break_threshold = 300 # Default 5 minutes, will be calculated later
@@ -641,7 +639,7 @@ def draw_mode_selection():
 
 # Reset game function
 def reset_game():
-    global game_over, countdown, score, current_state, play_start_time, spaceship, spaceship_group
+    global game_over, countdown, score, current_state, play_start_time, spaceship, spaceship_group, last_break_reminder, game_over_time
     
     # Clear all sprite groups
     bullet_group.empty()
@@ -667,6 +665,12 @@ def reset_game():
     if current_state != STATE_COOLDOWN_ACTIVE:
         current_state = STATE_NORMAL_PLAY
     play_start_time = time.time()
+    
+    # If we were in game over state, adjust last_break_reminder to account for the pause
+    if game_over_time > 0:
+        pause_duration = time.time() - game_over_time
+        last_break_reminder += pause_duration
+        game_over_time = 0
     
     # Update stats
     weekly_stats["games_played"] += 1
@@ -712,12 +716,12 @@ def initialize_break_threshold():
         if session_data:
             # Calculate average session duration
             avg_duration = sum(session_data) / len(session_data)
-            # Set break threshold to 1.5x average
-            dynamic_break_threshold = avg_duration * 1.5
+            # Set break threshold to 60% of average
+            dynamic_break_threshold = avg_duration * 0.6  # Changed from 1.5 to 0.6 (60% of average)
         else:
-            dynamic_break_threshold = 160  # Default for first-time players (2 minutes and 40 seconds)
+            dynamic_break_threshold = 20  # Set to 20 seconds for fresh start testing
     except (FileNotFoundError, json.JSONDecodeError):
-        dynamic_break_threshold = 160  # Default for first-time players (2 minutes and 40 seconds)
+        dynamic_break_threshold = 20  # Set to 20 seconds for fresh start testing
 
 # Call initialization at game start
 initialize_break_threshold()
@@ -728,6 +732,8 @@ create_aliens()
 # play_start_time = time.time() # Initialized later when gameplay starts
 # last_break_reminder = play_start_time # Initialized later when gameplay starts
 session_start_time = time.time()
+first_game_start = True  # Flag to track if this is the first game start
+game_over_time = 0  # Track when game over state started
 
 run = True
 while run:
@@ -819,27 +825,57 @@ while run:
         current_time = time.time()
         
         # Check for break reminder only during normal play after countdown
-        if current_state == STATE_NORMAL_PLAY and countdown == 0:
+        if countdown == 0 and game_over == 0:  # Check regardless of state
             elapsed_play_time = current_time - play_start_time
-            # Check if enough time has passed since the last reminder (or game start)
-            if (current_time - last_break_reminder) >= dynamic_break_threshold:
-                current_state = STATE_BREAK_REMINDER
-                break_reminder_time = current_time
-                last_break_reminder = current_time # Update last reminder time only when reminder is shown
-                
-        # Break reminder state handling
+            print(f"Current state: {current_state}, Elapsed time: {elapsed_play_time:.2f}s, Last reminder: {current_time - last_break_reminder:.2f}s ago")
+            
+            # Check if we have session data
+            has_session_data = False
+            try:
+                if os.path.exists('session_data.json'):
+                    with open('session_data.json', 'r') as f:
+                        session_data = json.load(f)
+                        has_session_data = len(session_data) > 0
+                        print(f"Session data exists: {has_session_data}, Number of sessions: {len(session_data)}")
+                        
+                        # Calculate dynamic threshold if we have session data
+                        if has_session_data:
+                            avg_duration = sum(session_data) / len(session_data)
+                            dynamic_break_threshold = avg_duration * 0.6  # Changed from 1.5 to 0.6 (60% of average)
+                            print(f"Dynamic threshold calculated: {dynamic_break_threshold:.2f} seconds")
+            except (FileNotFoundError, json.JSONDecodeError):
+                has_session_data = False
+                print("No session data found")
+            
+            # Use dynamic timing if session data exists, otherwise use 20-second intervals
+            if has_session_data:
+                if (current_time - last_break_reminder) >= dynamic_break_threshold and current_state in [STATE_NORMAL_PLAY, STATE_COOLDOWN_ACTIVE]:
+                    current_state = STATE_BREAK_REMINDER
+                    # Don't update last_break_reminder here - it will be updated when player makes a choice
+                    print(f"Dynamic break reminder triggered at {current_time - play_start_time:.2f} seconds")
+            else:
+                if (current_time - last_break_reminder) >= 20 and current_state in [STATE_NORMAL_PLAY, STATE_COOLDOWN_ACTIVE]:  # Fixed 20-second interval for fresh start
+                    current_state = STATE_BREAK_REMINDER
+                    # Don't update last_break_reminder here - it will be updated when player makes a choice
+                    print(f"Fresh start break reminder triggered at {current_time - play_start_time:.2f} seconds")
+        
+        # Handle different game states
         if current_state == STATE_BREAK_REMINDER:
+            print(f"In break reminder state, time since reminder: {current_time - last_break_reminder:.2f}s")
             # Check if player has ignored break for too long
-            if current_time - break_reminder_time >= ignore_duration_threshold:
+            if current_time - last_break_reminder >= ignore_duration_threshold:
                 current_state = STATE_COOLDOWN_ACTIVE
                 cooldown_start_time = current_time
                 weekly_stats["breaks_ignored"] += 1
+                print("Break ignored, entering cooldown state")
         
-        # Break taken state handling
-        if current_state == STATE_BREAK_TAKEN:
+        elif current_state == STATE_BREAK_TAKEN:
+            print(f"In break taken state, time since break start: {current_time - break_start_time:.2f}s")
             if current_time - break_start_time >= break_duration:
                 current_state = STATE_NORMAL_PLAY
                 play_start_time = current_time
+                last_break_reminder = current_time  # Reset the break reminder timer
+                print("Break completed, returning to normal play")
                 # Reset cooldown intensity and breaks ignored count after a proper break
                 cooldown_intensity = 0
                 breaks_ignored_count = 0
@@ -856,18 +892,27 @@ while run:
                 if len(spaceship_group) == 0 and spaceship.health_remaining > 0:
                     spaceship_group.add(spaceship)
         
-        # Enforced cooldown state handling
-        if current_state == STATE_ENFORCED_COOLDOWN:
-            draw_enforced_cooldown()
-            
+        elif current_state == STATE_ENFORCED_COOLDOWN:
             # Check if enforced break is over
-            if time.time() - break_start_time >= break_duration:
+            if current_time - break_start_time >= break_duration:
                 current_state = STATE_COOLDOWN_ACTIVE
-                cooldown_start_time = time.time()
+                cooldown_start_time = current_time
                 # Ensure spaceship is in the sprite group after enforced cooldown
                 if len(spaceship_group) == 0 and spaceship.health_remaining > 0:
                     spaceship_group.add(spaceship)
         
+        elif current_state == STATE_COOLDOWN_ACTIVE:
+            # Check for voluntary break during cooldown
+            key = pygame.key.get_pressed()
+            if key[pygame.K_p]:  # P key for pause/break
+                current_state = STATE_BREAK_TAKEN
+                break_start_time = current_time
+                weekly_stats["breaks_taken"] += 1
+            # Only return to normal play after the full cooldown duration
+            elif current_time - cooldown_start_time >= ignore_duration_threshold:
+                current_state = STATE_NORMAL_PLAY
+                print(f"Cooldown completed - returning to normal play")
+
         if countdown == 0:
             # Create random alien bullets
             time_now = pygame.time.get_ticks()
@@ -918,6 +963,10 @@ while run:
                     alien_group.update()
                     alien_bullet_group.update()
             else:
+                # If this is the first frame of game over, record the time
+                if game_over_time == 0:
+                    game_over_time = current_time
+                
                 # Draw more prominent end of session overlay
                 overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
                 overlay.fill((0, 0, 0, 200))  # Darker semi-transparent black for better contrast
@@ -972,7 +1021,9 @@ while run:
                 last_count = count_timer
                 if countdown == 0:
                     play_start_time = time.time()  # Reset play timer when game actually starts
-                    last_break_reminder = play_start_time # Reset break reminder timer too
+                    if first_game_start:  # Only reset break reminder timer on first game start
+                        last_break_reminder = play_start_time
+                        first_game_start = False
 
         # Update explosion group    
         explosion_group.update()
@@ -1062,7 +1113,7 @@ while run:
                     save_leaderboard()
                     run = False
 
-        # Draw state-specific overlays
+        # Draw state-specific overlays last to ensure they stay on top
         if current_state == STATE_BREAK_REMINDER:
             draw_break_reminder()
             
@@ -1072,79 +1123,76 @@ while run:
             
             # Check button clicks
             if take_break_button.check_click(mouse_pos, mouse_click):
+                print("Take break button clicked")
                 current_state = STATE_BREAK_TAKEN
-                break_start_time = time.time()
+                break_start_time = current_time
+                last_break_reminder = current_time  # Only update last_break_reminder when player makes a choice
                 weekly_stats["breaks_taken"] += 1
                 current_break_message = ""  # Reset message
                 
             if ignore_break_button.check_click(mouse_pos, mouse_click):
-                # Increment breaks ignored count
+                print("Ignore break button clicked")
                 breaks_ignored_count += 1
                 weekly_stats["breaks_ignored"] += 1
+                last_break_reminder = current_time  # Only update last_break_reminder when player makes a choice
                 
-                # In break-aware mode, enforce a break immediately
+                # Then check if we need to enter cooldown
                 if current_mode == MODE_BREAK_AWARE:
                     current_state = STATE_ENFORCED_COOLDOWN
-                    break_start_time = time.time()
-                    # Set cooldown intensity based on number of ignored breaks
-                    if breaks_ignored_count == 1:
-                        cooldown_intensity = 25
-                    elif breaks_ignored_count == 2:
-                        cooldown_intensity = 50
-                    elif breaks_ignored_count == 3:
-                        black_and_white = True
-                    elif breaks_ignored_count == 4:
-                        cooldown_intensity = 75
-                    elif breaks_ignored_count == 5:
-                        cooldown_intensity = 100
-                    elif breaks_ignored_count == 6:
-                        hide_progression = True
-                    elif breaks_ignored_count == 7:
-                        hide_score = True
+                    break_start_time = current_time
                 else:
-                    # Normal mode uses cooldown
                     current_state = STATE_COOLDOWN_ACTIVE
-                    cooldown_start_time = time.time()
-                    # Set cooldown intensity based on number of ignored breaks
-                    if breaks_ignored_count == 1:
-                        cooldown_intensity = 25
-                    elif breaks_ignored_count == 2:
-                        cooldown_intensity = 50
-                    elif breaks_ignored_count == 3:
-                        black_and_white = True
-                    elif breaks_ignored_count == 4:
-                        cooldown_intensity = 75
-                    elif breaks_ignored_count == 5:
-                        cooldown_intensity = 100
-                    elif breaks_ignored_count == 6:
-                        hide_progression = True
-                    elif breaks_ignored_count == 7:
-                        hide_score = True
+                    cooldown_start_time = current_time
+                
+                # Set cooldown intensity based on number of ignored breaks
+                if breaks_ignored_count == 1:
+                    cooldown_intensity = 25
+                elif breaks_ignored_count == 2:
+                    cooldown_intensity = 50
+                elif breaks_ignored_count == 3:
+                    black_and_white = True
+                elif breaks_ignored_count == 4:
+                    cooldown_intensity = 75
+                elif breaks_ignored_count == 5:
+                    cooldown_intensity = 100
+                elif breaks_ignored_count == 6:
+                    hide_progression = True
+                elif breaks_ignored_count == 7:
+                    hide_score = True
                 
                 current_break_message = ""  # Reset message
                 
+        elif current_state == STATE_COOLDOWN_ACTIVE:
+            # Draw cooldown overlay last to ensure it stays on top
+            draw_cooldown_overlay()
+            
+        elif current_state == STATE_ENFORCED_COOLDOWN:
+            draw_enforced_cooldown()
+            
         elif current_state == STATE_BREAK_TAKEN:
             draw_break_screen()
             
             # Check if break is over
-            if time.time() - break_start_time >= break_duration:
-                resume_button.check_hover(mouse_pos)
-                if resume_button.check_click(mouse_pos, mouse_click):
-                    current_state = STATE_NORMAL_PLAY
-                    play_start_time = time.time()
-                    
-        elif current_state == STATE_COOLDOWN_ACTIVE:
-            draw_cooldown_overlay()
-            
-            # Check for voluntary break during cooldown
-            key = pygame.key.get_pressed()
-            if key[pygame.K_p]:  # P key for pause/break
-                current_state = STATE_BREAK_TAKEN
-                break_start_time = time.time()
-                weekly_stats["breaks_taken"] += 1
+            if current_time - break_start_time >= break_duration:
+                current_state = STATE_NORMAL_PLAY
+                play_start_time = current_time
+                last_break_reminder = current_time
+                print("Break completed, returning to normal play")
+                # Reset cooldown intensity and breaks ignored count after a proper break
+                cooldown_intensity = 0
+                breaks_ignored_count = 0
+                hide_progression = False
+                hide_score = False
+                black_and_white = False  # Reset black and white effect
                 
-        elif current_state == STATE_ENFORCED_COOLDOWN:
-            draw_enforced_cooldown()
+                # Reset sound volumes to baseline
+                explosion_fx.set_volume(base_explosion_volume)
+                explosion2_fx.set_volume(base_explosion2_volume)
+                laser_fx.set_volume(base_laser_volume)
+                
+                # Ensure spaceship is in the sprite group after break
+                if len(spaceship_group) == 0 and spaceship.health_remaining > 0:
+                    spaceship_group.add(spaceship)
 
     pygame.display.update()
 

@@ -34,7 +34,7 @@ def save_session_duration(duration: float):
 def calculate_break_trigger_time(session_durations):
     """Calculate the break trigger time based on session durations"""
     if not session_durations:
-        return 160  # Default 2 minutes and 40 seconds
+        return 10  # Set to 10 seconds for testing
     
     # Calculate average session duration
     avg_duration = sum(session_durations) / len(session_durations)

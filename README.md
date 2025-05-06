@@ -1,52 +1,57 @@
-# Space Invaders - Break Aware
+# Break Invaders
 
 A Space Invaders game with built-in break reminders to promote healthy gaming habits.
 
+## Prerequisites
+
+- Python 3.8 or higher
+- pip (Python package installer)
+
 ## Installation
 
-1. Make sure you have Python 3.8 or higher installed
-2. Install the required dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/NurulhudaAlfares/breakinvaders.git
+cd breakinvaders
+```
+
+2. Install required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Running the Game
 
-There are several ways to run the game:
+### Windows
+Simply double-click the `run_game.bat` file.
 
-### Option 1: Using the run script (Recommended)
+### Manual Run
 ```bash
-python run_game.py
+python src/main.py
 ```
 
-### Option 2: Using the batch file (Windows)
-Double-click `run_game.bat` or run it from the command line:
-```bash
-run_game.bat
-```
+## Game Controls
 
-### Option 3: Running as a module
-```bash
-python -m src.main
-```
+- **Left Arrow**: Move spaceship left
+- **Right Arrow**: Move spaceship right
+- **Space**: Shoot
+- **ESC**: Quit game
+- **L**: Show leaderboard
 
 ## Game Features
 
 - Classic Space Invaders gameplay
 - Break reminders to promote healthy gaming habits
-- Two game modes:
-  - Normal Mode: Classic gameplay with break reminders
-  - Break-Aware Mode: Enforces breaks when ignored
-- Weekly statistics and leaderboard
-- Dynamic break timing based on play patterns
+- Dynamic difficulty adjustment
+- Score tracking and leaderboard
+- Multiple game modes:
+  - Normal Mode
+  - Break-Aware Mode (with progressive cooldown)
 
-## Controls
+## Game Modes
 
-- Left/Right Arrow Keys: Move spaceship
-- Space: Shoot
-- ESC: Exit game
-- L: Show leaderboard
-- P: Take a voluntary break
+1. **Normal Mode**: Classic gameplay without break reminders
+2. **Break-Aware Mode**: Includes break reminders and progressive cooldown if breaks are ignored
 
 ## Project Structure
 
@@ -85,4 +90,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -6,6 +6,7 @@ import time
 import datetime
 import json
 import os
+import math
 from rest_logic import save_game_stats, calculate_break_trigger_time, save_session_duration
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
@@ -299,29 +300,46 @@ class Bullets(pygame.sprite.Sprite):
         self.rect.y -= 5
         if self.rect.bottom < 0:
             self.kill()
-        if pygame.sprite.spritecollide(self, alien_group, True):
+        if pygame.sprite.spritecollide(self, alien_group, False):
+            for alien in pygame.sprite.spritecollide(self, alien_group, False):
+                if alien.is_boss:
+                    alien.health -= 1
+                    if alien.health <= 0:
+                        alien.kill()
+                        explosion = Explosion(alien.rect.centerx, alien.rect.centery, 3)
+                        explosion_group.add(explosion)
+                        global score
+                        score += 50  # Boss worth more points
+                elif alien.special_type == "tank":
+                    alien.health -= 1
+                    if alien.health <= 0:
+                        alien.kill()
+                        explosion = Explosion(alien.rect.centerx, alien.rect.centery, 2)
+                        explosion_group.add(explosion)
+                        score += 20  # Tank worth more points
+                else:
+                    alien.kill()
+                    explosion = Explosion(alien.rect.centerx, alien.rect.centery, 2)
+                    explosion_group.add(explosion)
+                    score += 10
             self.kill()
             
             # Adjust sound volume based on cooldown state
             if current_state == STATE_COOLDOWN_ACTIVE:
-                # Volume decreases gradually with intensity (100% to 0%)
                 volume_multiplier = (100.0 - cooldown_intensity) / 100.0
                 explosion_fx.set_volume(base_explosion_volume * volume_multiplier)
             else:
                 explosion_fx.set_volume(base_explosion_volume)
                 
             explosion_fx.play()
-            explosion = Explosion(self.rect.centerx, self.rect.centery, 2)
-            explosion_group.add(explosion)
-            
-            # Increase score
-            global score
-            score += 10
 
 # Create Aliens class
 class Aliens(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
+        self.is_boss = False
+        self.health = 1
+        self.special_type = None
         alien_num = str(random.randint(1, 5))
         self.image = pygame.image.load(f"img/alien{alien_num}.png")
         self.bw_image = pygame.image.load(f"img/bw/alien{alien_num}_bw_cleaned_final.png")
@@ -329,21 +347,55 @@ class Aliens(pygame.sprite.Sprite):
         self.rect.center = [x, y]
         self.move_counter = 0
         self.move_direction = 1
-        
-        # Speed increases with level
         self.base_speed = 1
-        self.speed_multiplier = 1 + (current_level - 1) * 0.2  # 20% faster per level
+        self.speed_multiplier = 1 + (current_level - 1) * 0.2
+        self.angle = 0  # For special movement patterns
+
+    def make_boss(self):
+        self.is_boss = True
+        self.health = 5  # Boss needs 5 hits
+        self.image = pygame.image.load("img/boss.png")
+        self.bw_image = pygame.image.load("img/bw/boss_bw.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = [screen_width // 2, 100]
+
+    def make_special(self, special_type):
+        self.special_type = special_type
+        if special_type == "fast":
+            self.base_speed *= 2
+            self.image = pygame.transform.scale(self.image, (40, 40))  # Make it smaller
+        elif special_type == "tank":
+            self.health = 3
+            self.image = pygame.transform.scale(self.image, (60, 60))  # Make it bigger
+        elif special_type == "zigzag":
+            self.angle = 0
+            self.base_speed *= 1.5
 
     def update(self):
-        # No slowdown during cooldown - maintain gameplay efficiency
-        # But increase speed based on level
-        move_speed = self.base_speed * self.speed_multiplier
-            
-        self.rect.x += self.move_direction * move_speed
-        self.move_counter += 1
-        if abs(self.move_counter) > 75:
-            self.move_direction *= -1
-            self.move_counter *= self.move_direction
+        if self.is_boss:
+            # Boss movement pattern
+            self.rect.x += math.sin(pygame.time.get_ticks() * 0.003) * 2
+            self.rect.y += math.cos(pygame.time.get_ticks() * 0.002) * 1
+        elif self.special_type == "zigzag":
+            # Zigzag movement
+            self.angle += 0.1
+            self.rect.x += math.sin(self.angle) * 3
+            self.rect.y += 0.5
+        else:
+            # Regular alien movement
+            move_speed = self.base_speed * self.speed_multiplier
+            self.rect.x += self.move_direction * move_speed
+            self.move_counter += 1
+            if abs(self.move_counter) > 75:
+                self.move_direction *= -1
+                self.move_counter *= self.move_direction
+                # Move down when changing direction
+                self.rect.y += 20
+
+        # Check if alien has reached the bottom
+        if self.rect.bottom >= screen_height - 100:  # 100 pixels from bottom
+            global game_over
+            game_over = -1  # Trigger game over
 
 # Create Alien Bullets class
 class Alien_Bullets(pygame.sprite.Sprite):
@@ -357,12 +409,11 @@ class Alien_Bullets(pygame.sprite.Sprite):
         # Speed increases with level
         self.base_speed = 2
         self.speed_multiplier = 1 + (current_level - 1) * 0.15  # 15% faster per level
+        if current_level >= 5:
+            self.speed_multiplier *= 1.5  # 50% faster for high levels
 
     def update(self):
-        # No slowdown during cooldown - maintain gameplay efficiency
-        # But increase speed based on level
         bullet_speed = self.base_speed * self.speed_multiplier
-            
         self.rect.y += bullet_speed
         if self.rect.top > screen_height:
             self.kill()
@@ -371,7 +422,6 @@ class Alien_Bullets(pygame.sprite.Sprite):
             
             # Adjust sound volume based on cooldown state
             if current_state == STATE_COOLDOWN_ACTIVE:
-                # Volume decreases gradually with intensity (100% to 0%)
                 volume_multiplier = (100.0 - cooldown_intensity) / 100.0
                 explosion2_fx.set_volume(base_explosion2_volume * volume_multiplier)
             else:
@@ -475,18 +525,42 @@ def create_aliens():
     # Generate aliens - number increases with level
     global rows, cols
     
-    # Increase number of aliens based on level
-    base_rows = 5
-    base_cols = 5
+    # Clear existing aliens
+    alien_group.empty()
     
-    # Add more rows and columns as level increases
-    rows = min(base_rows + (current_level - 1) // 2, 8)  # Max 8 rows
-    cols = min(base_cols + (current_level - 1) // 3, 8)  # Max 8 columns
-    
-    for row in range(rows):
-        for item in range(cols):
-            alien = Aliens(100 + item * 100, 100 + row * 70)
-            alien_group.add(alien)
+    # For levels 5 and above, create special challenges
+    if current_level >= 5:
+        # Create boss for every 5th level
+        if current_level % 5 == 0:
+            boss = Aliens(screen_width // 2, 100)
+            boss.make_boss()
+            alien_group.add(boss)
+        else:
+            # Create special aliens for other high levels
+            num_special = min(current_level // 5, 3)  # More special aliens as level increases
+            for i in range(num_special):
+                alien = Aliens(random.randint(100, screen_width-100), 100 + i * 70)
+                special_type = random.choice(["fast", "tank", "zigzag"])
+                alien.make_special(special_type)
+                alien_group.add(alien)
+            
+            # Add some regular aliens
+            for i in range(3):
+                alien = Aliens(random.randint(100, screen_width-100), 300 + i * 70)
+                alien_group.add(alien)
+    else:
+        # Regular levels (1-4)
+        base_rows = 5
+        base_cols = 5
+        
+        # Add more rows and columns as level increases
+        rows = min(base_rows + (current_level - 1) // 2, 8)
+        cols = min(base_cols + (current_level - 1) // 3, 8)
+        
+        for row in range(rows):
+            for item in range(cols):
+                alien = Aliens(100 + item * 100, 100 + row * 70)
+                alien_group.add(alien)
 
 # Create player
 spaceship = Spaceship(int(screen_width / 2), screen_height - 100, 3)
@@ -699,11 +773,8 @@ def update_session_average():
             # Update the global break threshold
             global dynamic_break_threshold
             dynamic_break_threshold = data['break_threshold']
-            
-            print(f"Updated average session time: {data['average_session_time']:.2f} seconds")
-            print(f"Updated break threshold: {data['break_threshold']:.2f} seconds")
     except Exception as e:
-        print(f"Error updating session average: {e}")
+        pass
 
 # Initialize break threshold from session data
 def initialize_break_threshold():
@@ -719,9 +790,9 @@ def initialize_break_threshold():
             # Set break threshold to 60% of average
             dynamic_break_threshold = avg_duration * 0.6  # Changed from 1.5 to 0.6 (60% of average)
         else:
-            dynamic_break_threshold = 20  # Set to 20 seconds for fresh start testing
+            dynamic_break_threshold = 150  # Set to 2.5 minutes for fresh start
     except (FileNotFoundError, json.JSONDecodeError):
-        dynamic_break_threshold = 20  # Set to 20 seconds for fresh start testing
+        dynamic_break_threshold = 150  # Set to 2.5 minutes for fresh start
 
 # Call initialization at game start
 initialize_break_threshold()
@@ -807,12 +878,15 @@ while run:
         if not hide_score:
             draw_text(f"SCORE: {score}", font30, white, 10, 30)
         
+        # Draw lives
+        draw_text(f"LIVES: {spaceship.health_remaining}", font30, white, 10, 70)
+        
         # Draw progression info if not hidden
         if not hide_progression:
             draw_progression_info()
         
         # Draw level
-        draw_text(f"LEVEL: {current_level}", font30, white, 10, 70)
+        draw_text(f"LEVEL: {current_level}", font30, white, 10, 110)
         
         # Check if current session time exceeds the break threshold
         current_session_time = time.time() - session_start_time
@@ -825,10 +899,7 @@ while run:
         current_time = time.time()
         
         # Check for break reminder only during normal play after countdown
-        if countdown == 0 and game_over == 0:  # Check regardless of state
-            elapsed_play_time = current_time - play_start_time
-            print(f"Current state: {current_state}, Elapsed time: {elapsed_play_time:.2f}s, Last reminder: {current_time - last_break_reminder:.2f}s ago")
-            
+        if countdown == 0 and game_over == 0:  # Check during active gameplay
             # Check if we have session data
             has_session_data = False
             try:
@@ -836,46 +907,39 @@ while run:
                     with open('session_data.json', 'r') as f:
                         session_data = json.load(f)
                         has_session_data = len(session_data) > 0
-                        print(f"Session data exists: {has_session_data}, Number of sessions: {len(session_data)}")
                         
                         # Calculate dynamic threshold if we have session data
                         if has_session_data:
                             avg_duration = sum(session_data) / len(session_data)
-                            dynamic_break_threshold = avg_duration * 0.6  # Changed from 1.5 to 0.6 (60% of average)
-                            print(f"Dynamic threshold calculated: {dynamic_break_threshold:.2f} seconds")
+                            dynamic_break_threshold = avg_duration * 0.6  # 60% of average session duration
             except (FileNotFoundError, json.JSONDecodeError):
                 has_session_data = False
-                print("No session data found")
             
-            # Use dynamic timing if session data exists, otherwise use 20-second intervals
+            # Use dynamic timing if session data exists, otherwise use fixed interval
             if has_session_data:
-                if (current_time - last_break_reminder) >= dynamic_break_threshold and current_state in [STATE_NORMAL_PLAY, STATE_COOLDOWN_ACTIVE]:
+                if (current_time - last_break_reminder) >= dynamic_break_threshold and current_state == STATE_NORMAL_PLAY:
                     current_state = STATE_BREAK_REMINDER
-                    # Don't update last_break_reminder here - it will be updated when player makes a choice
-                    print(f"Dynamic break reminder triggered at {current_time - play_start_time:.2f} seconds")
+                    last_break_reminder = current_time  # Update last reminder time
+                    current_break_message = ""  # Reset message to get a new one
             else:
-                if (current_time - last_break_reminder) >= 20 and current_state in [STATE_NORMAL_PLAY, STATE_COOLDOWN_ACTIVE]:  # Fixed 20-second interval for fresh start
+                if (current_time - last_break_reminder) >= 150 and current_state == STATE_NORMAL_PLAY:  # Fixed 2.5-minute interval for fresh start
                     current_state = STATE_BREAK_REMINDER
-                    # Don't update last_break_reminder here - it will be updated when player makes a choice
-                    print(f"Fresh start break reminder triggered at {current_time - play_start_time:.2f} seconds")
+                    last_break_reminder = current_time  # Update last reminder time
+                    current_break_message = ""  # Reset message to get a new one
         
         # Handle different game states
         if current_state == STATE_BREAK_REMINDER:
-            print(f"In break reminder state, time since reminder: {current_time - last_break_reminder:.2f}s")
             # Check if player has ignored break for too long
             if current_time - last_break_reminder >= ignore_duration_threshold:
-                current_state = STATE_COOLDOWN_ACTIVE
-                cooldown_start_time = current_time
+                current_state = STATE_ENFORCED_COOLDOWN
+                break_start_time = current_time
                 weekly_stats["breaks_ignored"] += 1
-                print("Break ignored, entering cooldown state")
         
         elif current_state == STATE_BREAK_TAKEN:
-            print(f"In break taken state, time since break start: {current_time - break_start_time:.2f}s")
             if current_time - break_start_time >= break_duration:
                 current_state = STATE_NORMAL_PLAY
                 play_start_time = current_time
                 last_break_reminder = current_time  # Reset the break reminder timer
-                print("Break completed, returning to normal play")
                 # Reset cooldown intensity and breaks ignored count after a proper break
                 cooldown_intensity = 0
                 breaks_ignored_count = 0
@@ -911,7 +975,6 @@ while run:
             # Only return to normal play after the full cooldown duration
             elif current_time - cooldown_start_time >= ignore_duration_threshold:
                 current_state = STATE_NORMAL_PLAY
-                print(f"Cooldown completed - returning to normal play")
 
         if countdown == 0:
             # Create random alien bullets
@@ -1039,6 +1102,9 @@ while run:
             if not hide_progression:
                 draw_progression_info()
             
+            # Draw lives
+            draw_text(f"LIVES: {spaceship.health_remaining}", font30, white, 10, 70)
+            
             # Draw game elements with black and white images
             for sprite in spaceship_group:
                 screen.blit(sprite.bw_image, sprite.rect)
@@ -1061,6 +1127,10 @@ while run:
                 draw_text(f"SCORE: {score}", font30, white, 10, 30)
             if not hide_progression:
                 draw_progression_info()
+            
+            # Draw lives
+            draw_text(f"LIVES: {spaceship.health_remaining}", font30, white, 10, 70)
+            
             spaceship_group.draw(screen)
             bullet_group.draw(screen)
             alien_group.draw(screen)
@@ -1123,7 +1193,6 @@ while run:
             
             # Check button clicks
             if take_break_button.check_click(mouse_pos, mouse_click):
-                print("Take break button clicked")
                 current_state = STATE_BREAK_TAKEN
                 break_start_time = current_time
                 last_break_reminder = current_time  # Only update last_break_reminder when player makes a choice
@@ -1131,7 +1200,6 @@ while run:
                 current_break_message = ""  # Reset message
                 
             if ignore_break_button.check_click(mouse_pos, mouse_click):
-                print("Ignore break button clicked")
                 breaks_ignored_count += 1
                 weekly_stats["breaks_ignored"] += 1
                 last_break_reminder = current_time  # Only update last_break_reminder when player makes a choice

@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Space Invaders - Break Aware</title>
+    <title>Break Invaders</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             margin: 0;
@@ -42,36 +43,18 @@
 </head>
 <body>
     <div id="loading">Loading game...</div>
-    <script type="module">
-        import { createApp } from 'https://pygame-web.github.io/archives/0.7/pygbag.js';
-        
-        // Debug logging
-        console.log("Initializing game...");
-        
-        const app = createApp({
-            name: 'breakinvaders',
-            width: 600,
-            height: 800,
-            fullscreen: false,
-            scale: 1,
-            target: document.body,
-            onReady: () => {
-                console.log("Game is ready!");
-                document.getElementById('loading').style.display = 'none';
-            },
-            onError: (error) => {
-                console.error("Game error:", error);
-                document.getElementById('loading').textContent = 'Error loading game. Check console for details.';
-            }
-        });
-
-        // Add event listeners for debugging
+    <script src="game.js"></script>
+    <script>
+        // Initialize game when window loads
         window.addEventListener('load', () => {
             console.log("Window loaded");
+            document.getElementById('loading').style.display = 'none';
         });
 
+        // Handle errors
         window.addEventListener('error', (event) => {
             console.error("Window error:", event);
+            document.getElementById('loading').textContent = 'Error loading game. Check console for details.';
         });
     </script>
 </body>

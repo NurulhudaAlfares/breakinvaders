@@ -1,0 +1,25 @@
+[build-system]
+requires = ["pygbag"]
+build-backend = "pygbag"
+
+[tool.pygbag]
+include = [
+    "main.py",
+    "rest_logic.py",
+    "*.json",
+    "img/**/*",
+    "img/bw/**/*",
+    "src/**/*.py",
+    "src/game/**/*.py",
+    "src/states/**/*.py",
+    "src/ui/**/*.py",
+    "src/utils/**/*.py"
+]
+exclude = [
+    "**/__pycache__/**",
+    "**/.git/**",
+    "**/.idea/**",
+    "build/**",
+    "venv/**",
+    "docs/**"
+] 

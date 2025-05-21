@@ -1,122 +1,58 @@
 [
   {
-    "timestamp": "2025-05-06 18:33:10",
-    "mode": "normal",
-    "duration": 36.8897385597229,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 54
+    "timestamp": "2025-05-20T18:08:04.643173",
+    "mode": "Normal",
+    "duration": 5,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 6
   },
   {
-    "timestamp": "2025-05-06 18:34:27",
-    "mode": "normal",
-    "duration": 32.50478410720825,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 54
+    "timestamp": "2025-05-20T18:08:17.721400",
+    "mode": "Normal",
+    "duration": 10,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 7
   },
   {
-    "timestamp": "2025-05-06 18:35:14",
-    "mode": "normal",
-    "duration": 18.994397163391113,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 54
+    "timestamp": "2025-05-20T18:08:30.662022",
+    "mode": "Normal",
+    "duration": 10,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 8
   },
   {
-    "timestamp": "2025-05-06 18:35:48",
-    "mode": "normal",
-    "duration": 27.477335214614868,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 54
+    "timestamp": "2025-05-20T18:09:06.584477",
+    "mode": "BreakAware",
+    "duration": 33,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 9
   },
   {
-    "timestamp": "2025-05-06 18:37:56",
-    "mode": "normal",
-    "duration": 37.90939283370972,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 55
+    "timestamp": "2025-05-20T19:35:13.692754",
+    "mode": "Normal",
+    "duration": 2,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 9
   },
   {
-    "timestamp": "2025-05-06 18:39:40",
-    "mode": "normal",
-    "duration": 17.182116508483887,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 55
+    "timestamp": "2025-05-21T17:39:51.164701",
+    "mode": "Normal",
+    "duration": 1,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 9
   },
   {
-    "timestamp": "2025-05-06 18:41:50",
-    "mode": "normal",
-    "duration": 16.280959844589233,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 55
-  },
-  {
-    "timestamp": "2025-05-06 18:42:32",
-    "mode": "normal",
-    "duration": 2.90498948097229,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 55
-  },
-  {
-    "timestamp": "2025-05-06 18:43:12",
-    "mode": "normal",
-    "duration": 6.2188332080841064,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 55
-  },
-  {
-    "timestamp": "2025-05-06 18:44:06",
-    "mode": "normal",
-    "duration": 21.97711491584778,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 56
-  },
-  {
-    "timestamp": "2025-05-06 18:44:57",
-    "mode": "normal",
-    "duration": 3.09405779838562,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 56
-  },
-  {
-    "timestamp": "2025-05-06 18:46:28",
-    "mode": "normal",
-    "duration": 15.926798343658447,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 56
-  },
-  {
-    "timestamp": "2025-05-06 18:47:23",
-    "mode": "normal",
-    "duration": 42.55102825164795,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 59
-  },
-  {
-    "timestamp": "2025-05-06 18:50:36",
-    "mode": "normal",
-    "duration": 88.86098051071167,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 65
-  },
-  {
-    "timestamp": "2025-05-06 18:50:54",
-    "mode": "normal",
-    "duration": 14.567769527435303,
-    "took_break": false,
-    "level": 2,
-    "breaks_ignored": 65
+    "timestamp": "2025-05-21T18:16:38.681889",
+    "mode": "Normal",
+    "duration": 21,
+    "took_break": true,
+    "level": 18,
+    "breaks_ignored": 10
   }
 ]

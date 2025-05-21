@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Mobile responsiveness support for better gameplay on smartphones
+- Touch controls for mobile devices (left/right movement and shooting)
+- Responsive canvas sizing using viewport units
+- Mobile-specific UI improvements
+- Loading indicator for better user experience
+- Touch-friendly button controls
+
 ## [1.0.0] - 2024-03-20
 
 ### Added

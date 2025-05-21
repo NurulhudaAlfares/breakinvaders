@@ -12,11 +12,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            overflow: hidden;
         }
         canvas {
             display: block;
-            margin: 0 auto;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 800px;
             border: 1px solid white;
         }
         #loading {
@@ -28,13 +36,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <div id="loading">Loading game...</div>
     <script type="module">
-        import { createApp } from 'https://pygame-web.github.io/archives/0.9/pygbag.js';
+        import { createApp } from 'https://pygame-web.github.io/archives/0.7/pygbag.js';
         
         // Debug logging
         console.log("Initializing game...");

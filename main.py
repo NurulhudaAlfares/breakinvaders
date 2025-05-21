@@ -139,9 +139,8 @@ current_break_message = ""
 break_overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
 break_overlay.fill((0, 0, 0, 180))  # Semi-transparent black
 
-# Cache for rendered text surfaces and their positions
+# Cache for rendered text surfaces
 text_cache = {}
-message_cache = {}
 
 def get_cached_text(text, font, color):
     key = (text, font, color)
@@ -583,8 +582,20 @@ def draw_break_reminder():
     if not current_break_message:
         current_break_message = random.choice(break_messages)
     
-    # Get cached message lines
-    lines = get_cached_message(current_break_message)
+    # Split message into lines
+    words = current_break_message.split()
+    lines = []
+    current_line = ""
+    
+    for word in words:
+        test_line = current_line + " " + word if current_line else word
+        if font20.size(test_line)[0] < screen_width - 100:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = word
+    if current_line:
+        lines.append(current_line)
     
     # Draw each line of the message centered
     y_pos = screen_height//2 - 50

@@ -22,15 +22,49 @@ STATE_LEADERBOARD_MINI = "LeaderboardMini"
 MODE_NORMAL = "Normal"
 MODE_BREAK_AWARE = "BreakAware"
 
+# Cache for rendered text surfaces
+text_cache = {}
+message_cache = {}
+
+def get_cached_text(text, font, color):
+    key = (text, font, color)
+    if key not in text_cache:
+        text_cache[key] = font.render(text, True, color)
+    return text_cache[key]
+
+def get_cached_message(message, font, screen_width):
+    if message not in message_cache:
+        # Split message into lines
+        words = message.split()
+        lines = []
+        current_line = ""
+        
+        for word in words:
+            test_line = current_line + " " + word if current_line else word
+            if font.size(test_line)[0] < screen_width - 100:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+        
+        # Cache the lines
+        message_cache[message] = lines
+    return message_cache[message]
+
 def draw_break_reminder(screen, font40, font30, font20, white, current_break_message, break_messages, take_break_button, ignore_break_button):
+    # Create and cache overlay if not exists
+    if not hasattr(draw_break_reminder, 'overlay'):
+        draw_break_reminder.overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+        draw_break_reminder.overlay.fill((0, 0, 0, 180))  # Semi-transparent black
+    
     # Use cached overlay
-    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
-    overlay.fill((0, 0, 0, 180))  # Semi-transparent black
-    screen.blit(overlay, (0, 0))
+    screen.blit(draw_break_reminder.overlay, (0, 0))
     
     # Break reminder text
     title_text = "Time for a Break!"
-    title_surface = font40.render(title_text, True, white)
+    title_surface = get_cached_text(title_text, font40, white)
     title_width = title_surface.get_width()
     screen.blit(title_surface, ((screen.get_width() - title_width) // 2, screen.get_height()//2 - 120))
     
@@ -38,25 +72,13 @@ def draw_break_reminder(screen, font40, font30, font20, white, current_break_mes
     if not current_break_message:
         current_break_message = random.choice(break_messages)
     
-    # Split message into lines
-    words = current_break_message.split()
-    lines = []
-    current_line = ""
-    
-    for word in words:
-        test_line = current_line + " " + word if current_line else word
-        if font20.size(test_line)[0] < screen.get_width() - 100:
-            current_line = test_line
-        else:
-            lines.append(current_line)
-            current_line = word
-    if current_line:
-        lines.append(current_line)
+    # Get cached message lines
+    lines = get_cached_message(current_break_message, font20, screen.get_width())
     
     # Draw each line of the message centered
     y_pos = screen.get_height()//2 - 50
     for line in lines:
-        line_surface = font20.render(line, True, white)
+        line_surface = get_cached_text(line, font20, white)
         line_width = line_surface.get_width()
         screen.blit(line_surface, ((screen.get_width() - line_width) // 2, y_pos))
         y_pos += 30

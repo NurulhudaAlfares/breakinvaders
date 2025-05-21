@@ -1,6 +1,0 @@
-@echo off
-echo Installing requirements...
-pip install -r requirements.txt
-echo Starting game...
-python src/main.py
-pause 

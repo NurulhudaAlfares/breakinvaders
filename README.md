@@ -13,6 +13,14 @@ A modern take on the classic Space Invaders game, built with Pygame and playable
 - Service worker for offline capabilities
 - Responsive canvas that adapts to different screen sizes
 
+## Web Features
+
+- **Progressive Web App (PWA)**: Install the game on your device for a better experience
+- **Offline Support**: Play the game even without an internet connection
+- **Mobile Optimized**: Works great on mobile devices with touch controls
+- **Fast Loading**: Assets are cached for quick loading
+- **Responsive Design**: Adapts to different screen sizes
+
 ## Mobile Support
 
 The game is now fully playable on mobile devices! Here's what's supported:

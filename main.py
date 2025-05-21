@@ -239,12 +239,12 @@ class Spaceship(pygame.sprite.Sprite):
         self.health_start = health
         self.health_remaining = health
         self.last_shot = pygame.time.get_ticks()
+        self.speed = 8  # Base movement speed
+        self.shoot_cooldown = 500  # milliseconds between shots
 
     def update(self):
         # Set movement speed
-        speed = 8
-        # Set a cooldown variable
-        cooldown = 500  # milliseconds
+        speed = self.speed
         game_over = 0
 
         # Get key press
@@ -258,7 +258,7 @@ class Spaceship(pygame.sprite.Sprite):
         time_now = pygame.time.get_ticks()
         
         # Shoot - cooldown mechanics don't affect gameplay efficiency
-        if key[pygame.K_SPACE] and time_now - self.last_shot > cooldown:
+        if key[pygame.K_SPACE] and time_now - self.last_shot > self.shoot_cooldown:
             # Adjust sound volume based on cooldown intensity
             if current_state == STATE_COOLDOWN_ACTIVE:
                 # Volume decreases gradually with intensity (100% to 0%)
@@ -285,6 +285,35 @@ class Spaceship(pygame.sprite.Sprite):
             self.kill()
             game_over = -1
         return game_over
+
+    def handle_touch(self, x, y):
+        """Handle touch screen input"""
+        if current_state == STATE_NORMAL_PLAY and game_mode_selected:
+            screen_third = screen_width // 3
+            
+            # Move left if touch is in left third
+            if x < screen_third and self.rect.left > 0:
+                self.rect.x -= self.speed
+                
+            # Move right if touch is in right third
+            elif x > 2 * screen_third and self.rect.right < screen_width:
+                self.rect.x += self.speed
+                
+            # Shoot if touch is in middle third
+            elif screen_third <= x <= 2 * screen_third:
+                time_now = pygame.time.get_ticks()
+                if time_now - self.last_shot > self.shoot_cooldown:
+                    # Adjust sound volume based on cooldown intensity
+                    if current_state == STATE_COOLDOWN_ACTIVE:
+                        volume_multiplier = (100.0 - cooldown_intensity) / 100.0
+                        laser_fx.set_volume(base_laser_volume * volume_multiplier)
+                    else:
+                        laser_fx.set_volume(base_laser_volume)
+                        
+                    laser_fx.play()
+                    bullet = Bullets(self.rect.centerx, self.rect.top)
+                    bullet_group.add(bullet)
+                    self.last_shot = time_now
 
 # Create Bullets class
 class Bullets(pygame.sprite.Sprite):
@@ -841,7 +870,9 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left mouse button
                 mouse_click = True
-                
+                # Handle touch input for spaceship
+                spaceship.handle_touch(event.pos[0], event.pos[1])
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_l:  # Press L to show leaderboard
                 current_state = STATE_LEADERBOARD_MINI

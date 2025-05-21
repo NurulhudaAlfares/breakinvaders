@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mobile-specific UI improvements
 - Loading indicator for better user experience
 - Touch-friendly button controls
+- Web optimization improvements:
+  - Added Progressive Web App (PWA) support with manifest.json
+  - Implemented service worker for offline support and asset caching
+  - Enhanced mobile device compatibility
+  - Improved loading screen and install prompt
+  - Added better error handling for asset loading
 
 ## [1.0.0] - 2024-03-20
 

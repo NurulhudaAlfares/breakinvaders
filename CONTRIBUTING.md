@@ -55,4 +55,24 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its MIT License. 
+By contributing, you agree that your contributions will be licensed under its MIT License.
+
+## Web Development Guidelines
+
+### Progressive Web App (PWA) Development
+- Follow the PWA best practices for manifest.json and service worker
+- Ensure all assets are properly cached for offline support
+- Test the app in both online and offline modes
+- Verify mobile responsiveness and touch controls
+
+### Mobile Optimization
+- Test on various screen sizes and orientations
+- Ensure touch controls are responsive and intuitive
+- Optimize asset loading for mobile networks
+- Verify PWA installation works correctly
+
+### Performance Guidelines
+- Keep asset sizes optimized
+- Use proper caching strategies
+- Implement lazy loading where appropriate
+- Monitor and optimize loading times 

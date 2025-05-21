@@ -1,58 +1,10 @@
 [
   {
-    "timestamp": "2025-05-20T18:08:04.643173",
+    "timestamp": "2025-05-21T21:36:53.129161",
     "mode": "Normal",
-    "duration": 5,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 6
-  },
-  {
-    "timestamp": "2025-05-20T18:08:17.721400",
-    "mode": "Normal",
-    "duration": 10,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 7
-  },
-  {
-    "timestamp": "2025-05-20T18:08:30.662022",
-    "mode": "Normal",
-    "duration": 10,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 8
-  },
-  {
-    "timestamp": "2025-05-20T18:09:06.584477",
-    "mode": "BreakAware",
-    "duration": 33,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 9
-  },
-  {
-    "timestamp": "2025-05-20T19:35:13.692754",
-    "mode": "Normal",
-    "duration": 2,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 9
-  },
-  {
-    "timestamp": "2025-05-21T17:39:51.164701",
-    "mode": "Normal",
-    "duration": 1,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 9
-  },
-  {
-    "timestamp": "2025-05-21T18:16:38.681889",
-    "mode": "Normal",
-    "duration": 21,
-    "took_break": true,
-    "level": 18,
-    "breaks_ignored": 10
+    "duration": 60,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 0
   }
 ]

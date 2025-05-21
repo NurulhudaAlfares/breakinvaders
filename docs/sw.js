@@ -4,19 +4,19 @@ const ASSETS_TO_CACHE = [
     './index.html',
     './game.js',
     './manifest.json',
-    './spaceship.png',
-    './alien1.png',
-    './alien2.png',
-    './alien3.png',
-    './alien4.png',
-    './alien5.png',
-    './alien_bullet.png',
-    './bullet.png',
-    './boss.png',
-    './bg.png',
-    './explosion.wav',
-    './explosion2.wav',
-    './laser.wav'
+    './img/spaceship.png',
+    './img/alien1.png',
+    './img/alien2.png',
+    './img/alien3.png',
+    './img/alien4.png',
+    './img/alien5.png',
+    './img/alien_bullet.png',
+    './img/bullet.png',
+    './img/boss.png',
+    './img/bg.png',
+    './img/explosion.wav',
+    './img/explosion2.wav',
+    './img/laser.wav'
 ];
 
 // Install event - cache assets

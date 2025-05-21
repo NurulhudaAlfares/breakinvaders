@@ -1,1 +1,5 @@
- 
+1.1.1 - Added touch screen controls
+- Implemented touch-based movement and shooting
+- Added touch area detection for left, right, and center screen
+- Integrated touch controls with existing keyboard controls
+- Added touch response handling in Spaceship class

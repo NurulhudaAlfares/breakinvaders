@@ -2,20 +2,20 @@
     "name": "Break Invaders",
     "short_name": "BreakInvaders",
     "description": "A space invaders game with break awareness",
+    "version": "1.1.1",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#000000",
-    "version": "1.1.1",
     "icons": [
         {
-            "src": "favicon.png",
+            "src": "spaceship.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "favicon.png",
+            "src": "spaceship.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"

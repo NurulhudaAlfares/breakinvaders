@@ -1,0 +1,45 @@
+[pygbag]
+# Screen resolution matching the game's native resolution
+width = 1024
+height = 600
+
+# Asset directories to include
+assets = ["img"]
+
+# Web-specific settings
+web_audio = true
+web_gl = true
+
+# Development settings
+debug = true
+
+# Force specific versions
+version = "0.7.1"
+template_version = "0.7.3"
+python_version = "3.11"
+
+# CDN settings
+[pygbag.cdn]
+url = "https://pygame-web.github.io/archives/0.7/"
+version = "0.7.3"
+
+# Package settings
+[pygbag.package]
+name = "breakinvaders"
+version = "1.0.0"
+description = "Space Invaders with Break Awareness"
+author = "Your Name"
+license = "MIT"
+
+# Server settings
+[pygbag.server]
+host = "127.0.0.1"
+port = 8000
+cors = true
+
+# Security settings
+[pygbag.security]
+cross_origin_embedder_policy = "credentialless"
+cross_origin_opener_policy = "same-origin"
+cross_origin_resource_policy = "cross-origin"
+content_security_policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://pygame-web.github.io/archives/0.7/ http://localhost:8000/; img-src 'self' data: https:; media-src 'self' data: https:;" 

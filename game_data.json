@@ -6,5 +6,301 @@
     "took_break": false,
     "level": 3,
     "breaks_ignored": 0
+  },
+  {
+    "timestamp": "2025-05-24T14:03:49.074149",
+    "mode": "Normal",
+    "duration": 6,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 0
+  },
+  {
+    "timestamp": "2025-05-24T14:07:06.123794",
+    "mode": "Normal",
+    "duration": 10,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 0
+  },
+  {
+    "timestamp": "2025-05-24T14:13:10.299037",
+    "mode": "Normal",
+    "duration": 20,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 1
+  },
+  {
+    "timestamp": "2025-05-26T22:26:52.341645",
+    "mode": "Normal",
+    "duration": 21,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 1
+  },
+  {
+    "timestamp": "2025-05-26T22:35:54.683736",
+    "mode": "Normal",
+    "duration": 30,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 2
+  },
+  {
+    "timestamp": "2025-05-26T22:39:41.506732",
+    "mode": "Normal",
+    "duration": 9,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 2
+  },
+  {
+    "timestamp": "2025-05-26T22:40:54.880710",
+    "mode": "Normal",
+    "duration": 12,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 2
+  },
+  {
+    "timestamp": "2025-05-26T22:42:25.351475",
+    "mode": "Normal",
+    "duration": 8,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 2
+  },
+  {
+    "timestamp": "2025-05-26T22:52:08.434158",
+    "mode": "Normal",
+    "duration": 48,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 3
+  },
+  {
+    "timestamp": "2025-05-26T22:59:23.841782",
+    "mode": "Normal",
+    "duration": 22,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 4
+  },
+  {
+    "timestamp": "2025-05-26T23:00:26.725780",
+    "mode": "Normal",
+    "duration": 19,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 5
+  },
+  {
+    "timestamp": "2025-05-26T23:01:44.193217",
+    "mode": "Normal",
+    "duration": 23,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 6
+  },
+  {
+    "timestamp": "2025-05-26T23:03:46.300154",
+    "mode": "Normal",
+    "duration": 15,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 6
+  },
+  {
+    "timestamp": "2025-05-26T23:04:06.338790",
+    "mode": "Normal",
+    "duration": 8,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 6
+  },
+  {
+    "timestamp": "2025-05-26T23:05:24.841886",
+    "mode": "Normal",
+    "duration": 24,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 7
+  },
+  {
+    "timestamp": "2025-05-26T23:07:33.991756",
+    "mode": "Normal",
+    "duration": 81,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 9
+  },
+  {
+    "timestamp": "2025-05-26T23:08:25.847834",
+    "mode": "Normal",
+    "duration": 6,
+    "took_break": false,
+    "level": 3,
+    "breaks_ignored": 9
+  },
+  {
+    "timestamp": "2025-05-28T13:47:07.390711",
+    "mode": "Normal",
+    "duration": 305,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T13:49:09.112322",
+    "mode": "Normal",
+    "duration": 8,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T13:54:49.961448",
+    "mode": "Normal",
+    "duration": 27,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T13:55:45.338236",
+    "mode": "Normal",
+    "duration": 22,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T14:12:50.469530",
+    "mode": "Normal",
+    "duration": 6,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T14:20:25.904525",
+    "mode": "Normal",
+    "duration": 4,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T16:55:06.538334",
+    "mode": "Normal",
+    "duration": 5,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-28T17:36:03.160814",
+    "mode": "Normal",
+    "duration": 13,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-29T15:09:06.284025",
+    "mode": "Normal",
+    "duration": 25,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-29T15:13:57.660578",
+    "mode": "Normal",
+    "duration": 4,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-29T15:16:36.033823",
+    "mode": "Normal",
+    "duration": 10,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-29T15:20:20.945899",
+    "mode": "Normal",
+    "duration": 8,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 14
+  },
+  {
+    "timestamp": "2025-05-29T15:28:52.271647",
+    "mode": "Normal",
+    "duration": 17,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 15
+  },
+  {
+    "timestamp": "2025-05-29T15:30:04.809356",
+    "mode": "Normal",
+    "duration": 12,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 16
+  },
+  {
+    "timestamp": "2025-05-29T15:30:24.985018",
+    "mode": "Normal",
+    "duration": 14,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 17
+  },
+  {
+    "timestamp": "2025-05-29T15:32:50.777081",
+    "mode": "Normal",
+    "duration": 31,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 18
+  },
+  {
+    "timestamp": "2025-05-29T15:35:45.836710",
+    "mode": "Normal",
+    "duration": 41,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 19
+  },
+  {
+    "timestamp": "2025-05-29T15:36:41.077931",
+    "mode": "Normal",
+    "duration": 25,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 20
+  },
+  {
+    "timestamp": "2025-05-29T15:48:51.012972",
+    "mode": "Normal",
+    "duration": 4,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 20
+  },
+  {
+    "timestamp": "2025-05-29T17:03:36.512091",
+    "mode": "Normal",
+    "duration": 21,
+    "took_break": true,
+    "level": 11,
+    "breaks_ignored": 21
   }
 ]

@@ -28,20 +28,34 @@ font30 = pygame.font.SysFont('Constantia', 30)
 font40 = pygame.font.SysFont('Constantia', 40)
 font20 = pygame.font.SysFont('Constantia', 20)
 
-# Load sounds
-explosion_fx = pygame.mixer.Sound("img/explosion.ogg")
-explosion_fx.set_volume(0.25)
+# Initialize sound variables
+sound_initialized = False
+user_engaged = False
 
-explosion2_fx = pygame.mixer.Sound("img/explosion2.ogg")
-explosion2_fx.set_volume(0.25)
+# Function to initialize sounds
+def initialize_sounds():
+    global explosion_fx, explosion2_fx, laser_fx, base_explosion_volume, base_explosion2_volume, base_laser_volume
+    try:
+        # Load sounds
+        explosion_fx = pygame.mixer.Sound("img/explosion.ogg")
+        explosion_fx.set_volume(0.25)
 
-laser_fx = pygame.mixer.Sound("img/laser.ogg")
-laser_fx.set_volume(0.25)
+        explosion2_fx = pygame.mixer.Sound("img/explosion2.ogg")
+        explosion2_fx.set_volume(0.25)
 
-# Base sound volumes for adjusting during cooldown
-base_explosion_volume = 0.25
-base_explosion2_volume = 0.25
-base_laser_volume = 0.25
+        laser_fx = pygame.mixer.Sound("img/laser.ogg")
+        laser_fx.set_volume(0.25)
+
+        # Base sound volumes for adjusting during cooldown
+        base_explosion_volume = 0.25
+        base_explosion2_volume = 0.25
+        base_laser_volume = 0.25
+        return True
+    except:
+        return False
+
+# Try to initialize sounds
+sound_initialized = initialize_sounds()
 
 # Define game variables
 rows = 5
@@ -267,8 +281,11 @@ class Spaceship(pygame.sprite.Sprite):
             else:
                 laser_fx.set_volume(base_laser_volume)
                 
-            if user_engaged:
-                laser_fx.play()
+            if user_engaged and sound_initialized:
+                try:
+                    laser_fx.play()
+                except:
+                    pass
             bullet = Bullets(self.rect.centerx, self.rect.top)
             bullet_group.add(bullet)
             self.last_shot = time_now
@@ -301,8 +318,11 @@ class Spaceship(pygame.sprite.Sprite):
                     else:
                         laser_fx.set_volume(base_laser_volume)
                         
-                    if user_engaged:
-                        laser_fx.play()
+                    if user_engaged and sound_initialized:
+                        try:
+                            laser_fx.play()
+                        except:
+                            pass
                     bullet = Bullets(self.rect.centerx, self.rect.top)
                     bullet_group.add(bullet)
                     self.last_shot = time_now
@@ -362,8 +382,11 @@ class Bullets(pygame.sprite.Sprite):
             else:
                 explosion_fx.set_volume(base_explosion_volume)
                 
-            if user_engaged:
-                explosion_fx.play()
+            if user_engaged and sound_initialized:
+                try:
+                    explosion_fx.play()
+                except:
+                    pass
 
 # Create Aliens class
 class Aliens(pygame.sprite.Sprite):
@@ -459,8 +482,11 @@ class Alien_Bullets(pygame.sprite.Sprite):
             else:
                 explosion2_fx.set_volume(base_explosion2_volume)
                 
-            if user_engaged:
-                explosion2_fx.play()
+            if user_engaged and sound_initialized:
+                try:
+                    explosion2_fx.play()
+                except:
+                    pass
             # Reduce spaceship health
             spaceship.health_remaining -= 1
             explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
@@ -852,7 +878,6 @@ game_over_time = 0  # Track when game over state started
 # Touch movement variables
 touch_active = False
 touch_position = (0, 0)
-user_engaged = False  # Track if user has interacted with the game
 
 run = True
 while run:
@@ -877,6 +902,9 @@ while run:
             
         if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
             user_engaged = True
+            # Try to initialize sounds on first user interaction if not already initialized
+            if not sound_initialized:
+                sound_initialized = initialize_sounds()
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left mouse button

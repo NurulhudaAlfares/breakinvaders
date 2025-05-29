@@ -29,13 +29,13 @@ font40 = pygame.font.SysFont('Constantia', 40)
 font20 = pygame.font.SysFont('Constantia', 20)
 
 # Load sounds
-explosion_fx = pygame.mixer.Sound("img/explosion.wav")
+explosion_fx = pygame.mixer.Sound("img/explosion.ogg")
 explosion_fx.set_volume(0.25)
 
-explosion2_fx = pygame.mixer.Sound("img/explosion2.wav")
+explosion2_fx = pygame.mixer.Sound("img/explosion2.ogg")
 explosion2_fx.set_volume(0.25)
 
-laser_fx = pygame.mixer.Sound("img/laser.wav")
+laser_fx = pygame.mixer.Sound("img/laser.ogg")
 laser_fx.set_volume(0.25)
 
 # Base sound volumes for adjusting during cooldown
@@ -267,7 +267,8 @@ class Spaceship(pygame.sprite.Sprite):
             else:
                 laser_fx.set_volume(base_laser_volume)
                 
-            laser_fx.play()
+            if user_engaged:
+                laser_fx.play()
             bullet = Bullets(self.rect.centerx, self.rect.top)
             bullet_group.add(bullet)
             self.last_shot = time_now
@@ -288,19 +289,9 @@ class Spaceship(pygame.sprite.Sprite):
 
     def handle_touch(self, x, y):
         """Handle touch screen input"""
-        if current_state == STATE_NORMAL_PLAY and game_mode_selected:
-            screen_third = screen_width // 3
-            
-            # Move left if touch is in left third
-            if x < screen_third and self.rect.left > 0:
-                self.rect.x -= self.speed
-                
-            # Move right if touch is in right third
-            elif x > 2 * screen_third and self.rect.right < screen_width:
-                self.rect.x += self.speed
-                
-            # Shoot if touch is in middle third
-            elif screen_third <= x <= 2 * screen_third:
+        if game_mode_selected:  # Only check if game mode is selected, not cooldown state
+            # Check if touch is on the spaceship
+            if self.rect.collidepoint(x, y):
                 time_now = pygame.time.get_ticks()
                 if time_now - self.last_shot > self.shoot_cooldown:
                     # Adjust sound volume based on cooldown intensity
@@ -310,10 +301,22 @@ class Spaceship(pygame.sprite.Sprite):
                     else:
                         laser_fx.set_volume(base_laser_volume)
                         
-                    laser_fx.play()
+                    if user_engaged:
+                        laser_fx.play()
                     bullet = Bullets(self.rect.centerx, self.rect.top)
                     bullet_group.add(bullet)
                     self.last_shot = time_now
+            
+            # Handle movement for all touch positions
+            # Calculate the difference between touch position and spaceship center
+            diff_x = x - self.rect.centerx
+            
+            # Move spaceship based on touch position with smooth movement
+            if abs(diff_x) > 5:  # Add a small deadzone to prevent jitter
+                if diff_x > 0 and self.rect.right < screen_width:
+                    self.rect.x += self.speed
+                elif diff_x < 0 and self.rect.left > 0:
+                    self.rect.x -= self.speed
 
 # Create Bullets class
 class Bullets(pygame.sprite.Sprite):
@@ -359,7 +362,8 @@ class Bullets(pygame.sprite.Sprite):
             else:
                 explosion_fx.set_volume(base_explosion_volume)
                 
-            explosion_fx.play()
+            if user_engaged:
+                explosion_fx.play()
 
 # Create Aliens class
 class Aliens(pygame.sprite.Sprite):
@@ -455,7 +459,8 @@ class Alien_Bullets(pygame.sprite.Sprite):
             else:
                 explosion2_fx.set_volume(base_explosion2_volume)
                 
-            explosion2_fx.play()
+            if user_engaged:
+                explosion2_fx.play()
             # Reduce spaceship health
             spaceship.health_remaining -= 1
             explosion = Explosion(self.rect.centerx, self.rect.centery, 1)
@@ -840,11 +845,14 @@ initialize_break_threshold()
 # Main game loop
 weekly_stats = load_leaderboard()
 create_aliens()
-# play_start_time = time.time() # Initialized later when gameplay starts
-# last_break_reminder = play_start_time # Initialized later when gameplay starts
 session_start_time = time.time()
 first_game_start = True  # Flag to track if this is the first game start
 game_over_time = 0  # Track when game over state started
+
+# Touch movement variables
+touch_active = False
+touch_position = (0, 0)
+user_engaged = False  # Track if user has interacted with the game
 
 run = True
 while run:
@@ -867,11 +875,22 @@ while run:
             save_leaderboard()
             run = False
             
+        if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
+            user_engaged = True
+            
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left mouse button
                 mouse_click = True
-                # Handle touch input for spaceship
+                touch_active = True
+                touch_position = event.pos
+                # Handle shooting on touch
                 spaceship.handle_touch(event.pos[0], event.pos[1])
+
+        if event.type == pygame.MOUSEMOTION and touch_active:
+            touch_position = event.pos
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            touch_active = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_l:  # Press L to show leaderboard
@@ -1017,6 +1036,10 @@ while run:
             # Only return to normal play after the full cooldown duration
             elif current_time - cooldown_start_time >= ignore_duration_threshold:
                 current_state = STATE_NORMAL_PLAY
+
+        # Handle continuous touch movement
+        if touch_active and game_mode_selected:  # Removed cooldown state check
+            spaceship.handle_touch(touch_position[0], touch_position[1])
 
         if countdown == 0:
             # Create random alien bullets
@@ -1328,4 +1351,3 @@ save_game_stats(
 )
 
 pygame.quit()
-

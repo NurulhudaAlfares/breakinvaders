@@ -100,8 +100,8 @@ async def custom_site():
         "path" : f"/ => {appdir.as_posix()}",
     }
 
-    # No need to mount APK since we're loading directly
-    track = platform.window.MM.prepare(None, json.dumps(cfg))
+    # Use tar.gz file for loading
+    track = platform.window.MM.prepare("breakinvaders.tar.gz", json.dumps(cfg))
 
     marginx = ux(.020) # 20%
     marginy = uy(.045) # 45%
